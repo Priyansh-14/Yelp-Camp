@@ -53,6 +53,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
@@ -65,15 +66,6 @@ app.use("/", UserRoutes);
 app.get("/", (req, res) => {
   res.render("home");
 });
-
-// app.get("/fakeUser", async (req, res) => {
-//   const user = new User({
-//     email: "testemail@gmail.com",
-//     username: "test1",
-//   });
-//   const newUser = await User.register(user, "password");
-//   res.send(newUser);
-// });
 
 app.all("*", (req, res, next) => {
   next(new ExpressErrors("Page Not Found", 404));
