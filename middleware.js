@@ -2,6 +2,7 @@ const ExpressErrors = require("./utils/ExpressErrors");
 const { campgroundSchema, reviewsSchema } = require("./joiSchema");
 const Campground = require("./models/campground");
 const Review = require("./models/review");
+
 module.exports.isLoggedIn = async (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.returnTo = req.originalUrl;
