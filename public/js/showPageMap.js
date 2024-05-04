@@ -4,10 +4,16 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/mapbox/streets-v9",
   // projection: "globe", // Display the map as a globe, since satellite-v9 defaults to Mercator
   zoom: 8,
-  center: geometry.coordinates,
+  center: campground.geometry.coordinates,
 });
 // map.addControl(new mapboxgl.NavigationControl());
 // map.scrollZoom.disable();
 
-new mapboxgl.Marker().setLngLat(geometry.coordinates).addTo(map);
-console.log(geometry.coordinates);
+new mapboxgl.Marker()
+  .setLngLat(campground.geometry.coordinates)
+  .setPopup(
+    new mapboxgl.Popup({ offset: 25 }).setHTML(
+      `<h3>${campground.title}</h3><p>${campground.location}</p>`
+    )
+  )
+  .addTo(map);

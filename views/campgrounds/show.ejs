@@ -2,12 +2,12 @@
 <link rel="stylesheet" href="/css/starabilty.css" />
 <script>
   const mapToken = "<%-process.env.MAPBOX_TOKEN%>";
-  const geometry = <%-JSON.stringify(campground.geometry)%>;
+  const campground = <%-JSON.stringify(campground)%>;
 </script>
 <div class="row">
   <div class="col-6">
     <div class="mb-3">
-      <div id="map" style="height: 200px; width: 200px"></div>
+      <div id="map" style="height: 300px; width: 100%"></div>
     </div>
 
     <div id="campgroundCarousel" class="carousel slide">
