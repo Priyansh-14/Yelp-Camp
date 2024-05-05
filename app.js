@@ -21,8 +21,8 @@ const ReviewRoutes = require("./routes/reviewRoutes");
 const User = require("./models/user");
 const UserRoutes = require("./routes/userRoutes");
 
-// const dbURL = process.env.DB_URL;
-const dbURL = "mongodb://127.0.0.1:27017/yelp-camp";
+const dbURL = process.env.DB_URL;
+// const dbURL = "mongodb://127.0.0.1:27017/yelp-camp";
 mongoose.connect(dbURL);
 
 const db = mongoose.connection;
