@@ -128,6 +128,6 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error", { err });
 });
 
-app.listen(3000, () => {
-  console.log("Listening on port 3000");
+app.listen(443, () => {
+  console.log("Listening on port 443");
 });
