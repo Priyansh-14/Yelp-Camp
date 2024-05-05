@@ -1,5 +1,5 @@
 const ExpressErrors = require("./utils/ExpressErrors");
-const { campgroundSchema, reviewsSchema } = require("./joiSchema");
+const { campgroundSchema, reviewSchema } = require("./joiSchema");
 const Campground = require("./models/campground");
 const Review = require("./models/review");
 
@@ -44,7 +44,7 @@ module.exports.isCampgroundAuthor = async (req, res, next) => {
 };
 
 module.exports.validateReview = (req, res, next) => {
-  const { error } = reviewsSchema.validate(req.body);
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((er) => er.message).join(",");
     throw new ExpressErrors(msg, 400);
