@@ -8,9 +8,12 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 
 const ExpressErrors = require("./utils/ExpressErrors");
 const CampgroundRoutes = require("./routes/campgroundRoutes");
@@ -18,7 +21,9 @@ const ReviewRoutes = require("./routes/reviewRoutes");
 const User = require("./models/user");
 const UserRoutes = require("./routes/userRoutes");
 
-mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
+// const dbURL = process.env.DB_URL;
+const dbURL = "mongodb://127.0.0.1:27017/yelp-camp";
+mongoose.connect(dbURL);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -27,6 +32,31 @@ db.once("open", () => {
 });
 
 const app = express();
+
+const scriptSrcUrls = ["https://api.mapbox.com/", "https://cdn.jsdelivr.net"];
+const styleSrcUrls = ["https://cdn.jsdelivr.net", "https://api.mapbox.com/"];
+const connectSrcUrls = ["https://api.mapbox.com/"];
+const fontSrcUrls = [];
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", "blob:"],
+      objectSrc: [],
+      imgSrc: [
+        "'self'",
+        "blob:",
+        "data:",
+        "https://res.cloudinary.com/dh9li6ili/",
+        "https://images.unsplash.com/",
+      ],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+);
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -37,12 +67,29 @@ app.use(methodOverride("_method"));
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(mongoSanitize());
+
+const store = MongoStore.create({
+  mongoUrl: dbURL,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret: "asimplesecret",
+  },
+});
+
+store.on("error", function (err) {
+  console.log("Session store error", err);
+});
+
 const sessionConfig = {
+  store,
+  name: "session",
   secret: "asimplesecret",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
+    // secure: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
