@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "20.11.1"
+  },
   "name": "yelp-camp",
   "version": "1.0.0",
   "description": "",
